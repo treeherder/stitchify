@@ -268,12 +268,27 @@ def main(image_path: Optional[str] = None):
     Args:
         image_path: Optional path to image. If None, uses command-line args
     """
+    # Check for help flag
+    if "--help" in sys.argv or "-h" in sys.argv:
+        print("Usage: pixelstitchifier <image_path> [options]")
+        print("")
+        print("Options:")
+        print("  --no-dmc              Disable DMC color matching")
+        print("  --pixelate            Convert photo to pixel art")
+        print("  --preset PRESET       Art quality preset: photo, landscape, portrait, detailed")
+        print("  --width WIDTH         Pixel art target width (default: auto)")
+        print("")
+        print("Examples:")
+        print("  pixelstitchifier photo.jpg --pixelate")
+        print("  pixelstitchifier landscape.jpg --pixelate --preset landscape")
+        sys.exit(0)
+    
     # Get image path from command line or parameter
     if image_path is None:
         if len(sys.argv) >= 2:
             image_path = sys.argv[1]
         else:
-            print("Usage: python -m pixelstitchifier <image_path> [options]")
+            print("Usage: pixelstitchifier <image_path> [options]")
             print("")
             print("Options:")
             print("  --no-dmc              Disable DMC color matching")
@@ -282,8 +297,8 @@ def main(image_path: Optional[str] = None):
             print("  --width WIDTH         Pixel art target width (default: auto)")
             print("")
             print("Examples:")
-            print("  python3 pixelstitchifier photo.jpg --pixelate")
-            print("  python3 pixelstitchifier landscape.jpg --pixelate --preset landscape")
+            print("  pixelstitchifier photo.jpg --pixelate")
+            print("  pixelstitchifier landscape.jpg --pixelate --preset landscape")
             sys.exit(1)
     
     # Parse flags
