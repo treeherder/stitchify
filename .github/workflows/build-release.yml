@@ -31,7 +31,7 @@ jobs:
       
       - name: Build CLI executable
         run: |
-          pyinstaller --onefile --name=pixelstitchifier --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
+          pyinstaller --onefile --name=pixelstitchifier --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn pixelstitchifier_main.py
       
       - name: Test executables
         run: |
