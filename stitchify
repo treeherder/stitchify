@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+"""
+Stitchify - Convert images to cross-stitch patterns with DMC thread matching
+
+Simple entry point for easy command-line usage.
+
+Usage:
+    python3 stitchify image.png            # DMC matching enabled (default)
+    python3 stitchify image.png --no-dmc   # Disable DMC matching
+"""
+
+import sys
+from pathlib import Path
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+from stitchify.converter import main
+
+if __name__ == "__main__":
+    main()
