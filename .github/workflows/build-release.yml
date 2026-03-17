@@ -27,11 +27,11 @@ jobs:
       
       - name: Build GUI executable
         run: |
-          pyinstaller --onefile --windowed --name=pixelstitchifier-gui --add-data="src/pixelstitchifier/dmc_colors.csv;src/stitchify" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn pixelstitchifier_gui.py
+          pyinstaller --onefile --windowed --name=pixelstitchifier-gui --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn pixelstitchifier_gui.py
       
       - name: Build CLI executable
         run: |
-          pyinstaller --onefile --name=pixelstitchifier --add-data="src/pixelstitchifier/dmc_colors.csv;src/stitchify" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
+          pyinstaller --onefile --name=pixelstitchifier --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
       
       - name: Test executables
         run: |
@@ -125,7 +125,7 @@ jobs:
       
       - name: Build Linux executable
         run: |
-          pyinstaller --onefile --name=pixelstitchifier-linux --add-data="src/pixelstitchifier/dmc_colors.csv:src/stitchify" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
+          pyinstaller --onefile --name=pixelstitchifier-linux --add-data="src/pixelstitchifier/dmc_colors.csv:src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
       
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
