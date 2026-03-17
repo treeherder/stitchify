@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 
 try:
-    from src.stitchify.art_converter import ArtConverter, QualityPreset, convert_to_pixel_art, HAS_OPENCV, HAS_SKLEARN
+    from src.pixelstitchifier.art_converter import ArtConverter, QualityPreset, convert_to_pixel_art, HAS_OPENCV, HAS_SKLEARN
     ART_CONVERTER_AVAILABLE = True
 except ImportError:
     ART_CONVERTER_AVAILABLE = False

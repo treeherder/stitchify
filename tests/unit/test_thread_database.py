@@ -21,7 +21,7 @@ class TestThreadDatabase:
     
     def test_convert_thread_database_to_internal_format(self):
         """Test converting thread-database format to our DMCMatcher format."""
-        # from src.stitchify.dmc_matcher import convert_thread_db_format
+        # from src.pixelstitchifier.dmc_matcher import convert_thread_db_format
         # thread_db_data = {...}
         # internal_format = convert_thread_db_format(thread_db_data)
         # assert "310" in internal_format

@@ -4,13 +4,13 @@ from pathlib import Path
 from PIL import Image
 
 
-class TestStitchifyIntegration:
+class TestPixelstitchifierIntegration:
     """End-to-end integration tests."""
     
     def test_simple_workflow_without_dmc(self, simple_rgba_image, tmp_path):
         """Test complete workflow: load image -> generate pattern (no DMC)."""
-        # from src.stitchify import StitchifyConverter
-        # converter = StitchifyConverter()
+        # from src.stitchify import PixelstitchifierConverter
+        # converter = PixelstitchifierConverter()
         # output_path = tmp_path / "pattern.png"
         # converter.convert(simple_rgba_image, output_path)
         # assert output_path.exists()
@@ -21,7 +21,7 @@ class TestStitchifyIntegration:
     
     def test_workflow_with_dmc_matching(self, simple_rgba_image, tmp_path, sample_dmc_colors):
         """Test workflow with DMC color matching enabled."""
-        # converter = StitchifyConverter(use_dmc=True, dmc_colors=sample_dmc_colors)
+        # converter = PixelstitchifierConverter(use_dmc=True, dmc_colors=sample_dmc_colors)
         # output_path = tmp_path / "pattern_dmc.png"
         # converter.convert(simple_rgba_image, output_path)
         # Pattern should include DMC numbers in legend

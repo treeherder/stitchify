@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "stitchify"
+name = "pixelstitchifier"
 version = "0.4.0"
 description = "Convert pixel-art images into cross-stitch patterns with DMC thread color matching"
 authors = [{name = "Noëlle Anthony"}]
@@ -27,7 +27,7 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = [
     "-v",
-    "--cov=src/stitchify",
+    "--cov=src/pixelstitchifier",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]

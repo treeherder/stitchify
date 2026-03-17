@@ -1,6 +1,6 @@
 """Tests for SymbolMapper module - assigns symbols to colors and manages legend."""
 import pytest
-from src.stitchify.symbol_mapper import SymbolMapper
+from src.pixelstitchifier.symbol_mapper import SymbolMapper
 
 
 class TestSymbolMapper:

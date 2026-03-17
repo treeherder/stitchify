@@ -1,173 +1,257 @@
-# Stitchify
+# pixelstitchifier
 
-Convert images into professional cross-stitch patterns with automatic DMC thread matching and intelligent pixel art conversion.
+> *For Andrea because she makes my heart sing*
+---
 
-**Version 0.5.0** - Now with high-quality photo-to-pixel-art conversion!
+## Turn Your Photos Into Cross-Stitch Patterns
 
-## Features
+Have a photo you'd love to stitch? pixelstitchifier transforms any image into a professional cross-stitch pattern with real DMC thread colors. Just load your image, click a button, and start stitching!
 
-- ✅ Converts pixel-art images to cross-stitch patterns (1px = 1 stitch)
-- ✅ 🎨 **NEW:** Photo-to-pixel-art conversion with professional quality
-- ✅ 🧵 **NEW:** Automatic DMC thread color matching (454 colors)
-- ✅ 🎭 Multi-stage art conversion with edge-preserving filters
-- ✅ 🖼️ Quality presets for different image types (photo, landscape, portrait, detailed)
-- ✅ Generates pattern grid with major/minor gridlines
-- ✅ Symbol-based color mapping (A-Z, a-z)
-- ✅ Comprehensive legend with stitch counts
-- ✅ Modular, testable architecture
-- ✅ Comprehensive test suite (TDD)
-- ✅ Deterministic output (same input = same output)
+Perfect for stitching photos of loved ones, pets, landscapes, or any image that means something to you.
 
-## Requirements
+---
 
-**Core:**
-- Python 3.8+
-- Pillow (PIL)
+## 📥 Download for Windows
 
-**Optional (for high-quality photo conversion):**
-- opencv-python - Edge-preserving bilateral filtering
-- scikit-learn - Intelligent K-means color clustering
+**No technical knowledge required!** Just download and double-click:
 
-## Installation
+### 👉 **[Download pixelstitchifier (Windows)](../../releases/latest)** 👈
 
-### Basic Installation
+1. Click the link above
+2. Download `pixelstitchifier-gui.exe`
+3. Double-click to open
+4. Select your photo
+5. Click "Generate Pattern"
+6. Start stitching!
+
+**That's it!** Your pattern will be saved right next to your original image.
+
+> **Note:** Windows might show a security warning on first run. Click "More info" → "Run anyway". This is normal for new applications that aren't code-signed (which costs $$$ we don't have!).
+
+---
+
+## 🎨 How to Use (GUI Version)
+
+The graphical interface makes it super simple to create patterns:
+
+![screen shot](screenshot.png)
+
+### What Each Option Does:
+
+- **Match to DMC thread colors** ✅ *(Recommended)*  
+  Automatically converts your image colors to real DMC embroidery thread colors (all 454 of them!). Your pattern will tell you exactly which thread to buy.
+
+- **Convert photo to pixel art first** 🎨 *(Recommended for photos)*  
+  Turns regular photos into beautiful pixel art before making the pattern. This makes photos actually stitchable! Skip this if you're already starting with pixel art.
+
+- **Presets** 🎯  
+  Different images need different treatment:
+  - **photo** - General photos (family, pets, etc.)
+  - **landscape** - Outdoor scenes with lots of color
+  - **portrait** - People and faces (gentler processing)
+  - **detailed** - Intricate images that need fine details
+
+### Your Results:
+
+After clicking "Generate Pattern", you'll get:
+
+1. **`yourimage_pattern.png`** - Your cross-stitch pattern with:
+   - Grid lines for easy counting
+   - Symbols (A-Z) for each color
+   - A legend showing which DMC thread each symbol needs
+   - Stitch counts for each color
+
+2. **`yourimage_pixelated.png`** *(if you used "convert to pixel art")*  
+   The intermediate pixel art version, in case you want to see what it looks like before stitching
+
+---
+
+---
+
+## 💻 For Developers & Command Line Users
+
+If you're comfortable with the terminal or want to integrate pixelstitchifier into your own projects, you can use the command line version or Python library.
+
+<details>
+<summary><strong>Click to expand command line instructions</strong></summary>
+
+### Installation
+
+**Requirements:**
+- Python 3.8 or newer
+- pip (Python package manager)
+
+**Install:**
 
 ```bash
-# Core dependencies only
-pip install Pillow
+# Clone the repository
+git clone https://github.com/treeherder/pixelstitchifier.git
+cd pixelstitchifier
 
-# With photo-to-pixel-art support (recommended)
+# Install dependencies
 pip install -r requirements-dev.txt
 ```
 
-### Development Installation
+### Command Line Usage
+
+**Basic usage:**
 
 ```bash
-# Install in editable mode with dev dependencies
-pip install -e .
+# Simple: DMC matching enabled by default
+python3 pixelstitchifier your_image.png
+
+# For photos: Convert to pixel art first
+python3 pixelstitchifier photo.jpg --pixelate --preset photo
+
+# Choose a preset for your image type
+python3 pixelstitchifier landscape.jpg --pixelate --preset landscape
+python3 pixelstitchifier portrait.jpg --pixelate --preset portrait
 ```
 
-## Usage
-
-### Command Line
-
-**Simple Usage** (recommended):
+**All options:**
 
 ```bash
-# DMC matching enabled by default!
-python3 stitchify your_image.png
+python3 pixelstitchifier IMAGE [OPTIONS]
 
-# Or make it executable
-./stitchify your_image.png
-
-# Disable DMC matching if you want original colors
-python3 stitchify your_image.png --no-dmc
+Options:
+  --pixelate           Convert photo to pixel art before making pattern
+  --preset PRESET      Quality preset: photo, landscape, portrait, detailed
+  --width WIDTH        Pixel art width in stitches (default: varies by preset)
+  --no-dmc            Use original colors instead of DMC thread colors
+  --help              Show help message
 ```
 
-**Photo to Pixel Art Conversion** (NEW):
-
-```bash
-# Convert photos to high-quality pixel art for cross-stitch
-python3 stitchify photo.jpg --pixelate
-
-# Use quality presets for different image types
-python3 stitchify landscape.jpg --pixelate --preset landscape
-python3 stitchify portrait.jpg --pixelate --preset portrait
-python3 stitchify detailed_art.jpg --pixelate --preset detailed
-
-# Custom pixel art width
-python3 stitchify photo.jpg --pixelate --width 200
-```
-
-**Available Presets:**
-- `photo` - General photos with balanced settings (default)
-- `landscape` - Enhanced saturation and contrast for outdoor scenes
-- `portrait` - Gentler smoothing to preserve skin tones
-- `detailed` - Maximum edge preservation for intricate subjects
-
-**Alternative entry points:**
-
-```bash
-# Using the full script name
-python stitchify_main.py your_image.png
-
-# Using as module
-python -m stitchify your_image.png
-python -m stitchify your_image.png --no-dmc
-```
-
-### As a Library
+### Using as a Python Library
 
 ```python
-from stitchify import StitchifyConverter
+from src.pixelstitchifier.converter import PixelstitchifierConverter
 
-# With DMC color matching (default behavior)
-converter = StitchifyConverter(use_dmc=True)
-converter.convert("input.png", "output_pattern.png")
+# Create converter with DMC matching (default)
+converter = PixelstitchifierConverter(
+    use_dmc=True,           # Match to DMC threads
+    pixelate=True,          # Convert photos to pixel art
+    art_preset='photo'      # Quality preset
+)
 
-# Without DMC matching (original colors)
-converter = StitchifyConverter(use_dmc=False)
-converter.convert("input.png", "output_pattern.png")
-
-# With custom DMC database
-from stitchify import DMCMatcher
-custom_dmc = DMCMatcher.from_json("custom_dmc_colors.json")
-converter = StitchifyConverter(use_dmc=True, dmc_colors=custom_dmc.get_palette())
-converter.convert("input.png", "output_pattern.png")
+# Generate pattern
+output_path = converter.convert("my_photo.jpg")
+print(f"Pattern saved to: {output_path}")
 ```
 
-## Architecture
+See [ARCHITECTURE.md](ARCHITECTURE.md) for developer documentation.
 
-The codebase is now modular and well-tested:
+</details>
 
+---
+
+## 🎯 What Makes This Different
+
+This project started from [Noëlle Anthony](https://github.com/NoelleDL)'s original [`stitchify`](https://github.com/NoelleDL/stitchify) - a simple tool that converted pixel art into cross-stitch patterns. That was perfect for video game sprites and simple graphics!
+
+But what if you wanted to stitch a photo of your family, your pet, or a beautiful landscape? That's where this fork comes in.
+
+### This Version Adds:
+
+- 🖼️ **Photo-to-Pixel-Art Conversion** - Real photos become stitchable pixel art with intelligent processing
+- 🧵 **DMC Thread Matching** - All 454 official DMC embroidery thread colors, automatically matched
+- 🎨 **Quality Presets** - Different settings optimized for photos, landscapes, portraits, and detailed images
+- 🖱️ **GUI Application** - No command line needed! Point, click, stitch
+- 📦 **Windows Executable** - No Python installation required
+- 🎭 **Advanced Image Processing** - Edge-preserving filters, smart color clustering, dithering
+- ✅ **Comprehensive Testing** - Professional software engineering practices (61% test coverage and growing!)
+
+### The Original Vision:
+
+Noëlle's original README said:
+> *"TODO: Correspond hex colors to floss colors, where possible. (Maybe) add GUI."*
+
+Well, mission accomplished! And then some. 💪
+
+This fork took the core concept and built it into a tool that anyone can use to turn their cherished photos into cross-stitch patterns. The code has been completely rewritten with a modular architecture, extensive testing, and professional software engineering practices.
+
+**Thank you, Noëlle, for the inspiration and the foundation!** 🙏
+
+---
+
+## 📚 Technical Details
+
+<details>
+<summary><strong>For the technically curious...</strong></summary>
+
+### What's Under the Hood:
+
+**Architecture:**
+- Modular, testable design with clear separation of concerns
+- Comprehensive test suite (pytest) with 61% coverage
+- Type hints throughout the codebase
+- Deterministic output (same input always produces same result)
+
+**Image Processing Pipeline:**
+1. **Load & Validate** - Check image format and accessibility
+2. **Pixelate** *(optional)* - Multi-stage conversion:
+   - Bilateral filtering to smooth while preserving edges
+   - Smart color quantization with K-means clustering
+   - Preset-specific adjustments (saturation, contrast, etc.)
+3. **DMC Matching** *(optional)* - Map to 454 real DMC thread colors using PIL's adaptive algorithm
+4. **Symbol Assignment** - Map each color to a unique symbol (A-Z, a-z)
+5. **Pattern Generation** - Create grid with symbols, legend, and stitch counts
+
+**Dependencies:**
+- `Pillow (PIL)` - Core image processing
+- `opencv-python` - Advanced filtering (bilateral filter)
+- `scikit-learn` - K-means color clustering
+- `pytest` - Testing framework
+
+**Code Structure:**
 ```
-src/stitchify/
-├── __init__.py              # Package exports
-├── image_loader.py          # Image loading and pixel access
-├── color_processor.py       # Color conversion and filtering
-├── symbol_mapper.py         # Symbol-to-color mapping
-├── pattern_generator.py     # Pattern image generation with grid
-├── dmc_matcher.py           # DMC thread color matching
-├── thread_db_integration.py # Thread-database package integration
-└── converter.py             # Main orchestrator class
+src/pixelstitchifier/
+├── __init__.py              Package exports
+├── image_loader.py          Image loading and validation
+├── color_processor.py       Color quantization and filtering  
+├── symbol_mapper.py         Symbol-to-color mapping
+├── pattern_generator.py     Pattern image with grid and legend
+├── dmc_matcher.py           DMC thread color matching
+├── art_converter.py         Photo-to-pixel-art conversion
+├── thread_database.py       DMC color database (454 colors)
+└── converter.py             Main orchestrator
 ```
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design documentation.
+See [ARCHITECTURE.md](ARCHITECTURE.md) and [tests/README.md](tests/README.md) for more details.
 
-## Testing
+</details>
 
-Comprehensive test suite with >90% coverage goal:
+---
 
-```bash
-# Run all tests
-pytest
+## 🤝 Contributing
 
-# Run with coverage
-pytest --cov=src/stitchify --cov-report=html
+Found a bug? Have an idea? Pull requests welcome!
 
-# Run specific test module
-pytest tests/test_dmc_matcher.py -v
-```
+For major changes, please open an issue first to discuss what you'd like to change.
 
-See [tests/README.md](tests/README.md) for testing guide.
+**Current priorities:**
+- Increasing test coverage toward 80%
+- More quality presets for different image types
+- Better documentation with examples
+- Performance optimizations for large images
 
-## DMC Color Matching
+---
 
-**DMC matching is now enabled by default!** Your patterns automatically use real DMC embroidery thread colors.
+## 📄 License & Credits
 
-### Features
+**Original Project:** [`stitchify`](https://github.com/NoelleDL/stitchify) by Noëlle Anthony  
+**This Fork:** Extensively modified and enhanced by [treeherder](https://github.com/treeherder)
 
-Stitchify automatically:
+The core concept of "pixel art → cross-stitch pattern" comes from Noëlle's original work. This fork has taken that concept in a completely different direction with photo conversion, DMC matching, GUI, and professional software engineering practices.
 
-1. **Quantizes to DMC palette** - Uses all 454 authentic DMC thread colors
-2. **Smart color selection** - PIL's adaptive algorithm picks the best colors for YOUR image
-3. **Preserves subtlety** - Floyd-Steinberg dithering maintains color variations
-4. **Symbol-constrained** - Auto-limits to 52 colors (A-Z, a-z symbols)
-5. **Accurate matching** - Each image color maps to exactly one DMC thread
+*[Add your license information here]*
 
-**No manual color reduction needed!** Feed any image (even with thousands of colors) and get a stitchable pattern.
+---
 
-Use `--no-dmc` flag if you want to use original image colors instead.
+## 💖 Made With Love
+
+This project exists because someone special deserves beautiful, handmade gifts. May your stitching bring as much joy as the photos that inspire your patterns.
+
+Happy stitching! 🧵✨
 
 ### How It Works
 
@@ -181,7 +265,7 @@ Two-stage intelligent quantization:
 
 ```bash
 # Input: Photo with 12,213 colors - DMC matching automatic!
-python3 stitchify sunset_photo.png
+python3 pixelstitchifier sunset_photo.png
 
 # Output: 17 optimal DMC thread colors
 # DMC-352 Coral Light (10,397 stitches)
@@ -193,9 +277,9 @@ python3 stitchify sunset_photo.png
 ### Programmatic Usage
 
 ```python
-from stitchify import StitchifyConverter
+from pixelstitchifier import PixelstitchifierConverter
 
-converter = StitchifyConverter(use_dmc=True)
+converter = PixelstitchifierConverter(use_dmc=True)
 converter.convert("pixel_art.png")
 ```
 
@@ -266,7 +350,7 @@ Different image types need different processing:
 ### Programmatic Usage
 
 ```python
-from stitchify import ArtConverter, StitchifyConverter
+from pixelstitchifier import ArtConverter, PixelstitchifierConverter
 
 # Method 1: Convert photo to pixel art, then to pattern
 converter = ArtConverter(target_width=128, preset='landscape')
@@ -274,7 +358,7 @@ pixel_art = converter.convert('photo.jpg')
 pixel_art.save('pixel_art.png')
 
 # Method 2: One-step conversion
-converter = StitchifyConverter(
+converter = PixelstitchifierConverter(
     use_dmc=True,
     pixelate=True,
     pixelate_width=128,
@@ -283,7 +367,7 @@ converter = StitchifyConverter(
 converter.convert('photo.jpg', 'pattern.png')
 
 # Method 3: Convenience function
-from stitchify import convert_to_pixel_art
+from pixelstitchifier import convert_to_pixel_art
 pixel_art = convert_to_pixel_art('photo.jpg', width=128, preset='photo')
 ```
 
@@ -312,11 +396,11 @@ For comprehensive DMC color data (400+ colors), install `thread-database`:
 pip install thread-database  # (when available)
 ```
 
-Stitchify will automatically use it if installed, or fall back to a bundled minimal set.
+pixelstitchifier will automatically use it if installed, or fall back to a bundled minimal set.
 
 ## Backwards Compatibility
 
-The original `stitchify.py` remains available for backwards compatibility. New development uses the modular architecture in `src/stitchify/`.
+The original `pixelstitchifier.py` remains available for backwards compatibility. New development uses the modular architecture in `src/pixelstitchifier/`.
 
 ## Roadmap
 

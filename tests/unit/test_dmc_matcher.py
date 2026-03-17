@@ -1,7 +1,7 @@
 """Tests for DMCMatcher module - matches colors to DMC thread palette."""
 import pytest
 import math
-from src.stitchify.dmc_matcher import DMCMatcher
+from src.pixelstitchifier.dmc_matcher import DMCMatcher
 
 
 class TestDMCMatcher:

@@ -9,7 +9,7 @@ from .symbol_mapper import SymbolMapper
 from .pattern_generator import PatternGenerator
 from .dmc_matcher import DMCMatcher
 from .art_converter import ArtConverter, convert_to_pixel_art
-from .converter import StitchifyConverter, main
+from .converter import PixelstitchifierConverter, main
 
 __all__ = [
     "ImageLoader",
@@ -19,6 +19,6 @@ __all__ = [
     "DMCMatcher",
     "ArtConverter",
     "convert_to_pixel_art",
-    "StitchifyConverter",
+    "PixelstitchifierConverter",
     "main",
 ]

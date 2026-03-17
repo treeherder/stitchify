@@ -1,7 +1,7 @@
 """Tests for ColorProcessor module - converts pixels to hex and filters transparency."""
 import pytest
-from src.stitchify.color_processor import ColorProcessor
-from src.stitchify.image_loader import ImageLoader
+from src.pixelstitchifier.color_processor import ColorProcessor
+from src.pixelstitchifier.image_loader import ImageLoader
 
 
 class TestColorProcessor:

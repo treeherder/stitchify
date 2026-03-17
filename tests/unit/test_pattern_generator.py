@@ -1,7 +1,7 @@
 """Tests for PatternGenerator module - creates cross-stitch pattern images with grid."""
 import pytest
 from PIL import Image
-from src.stitchify.pattern_generator import PatternGenerator
+from src.pixelstitchifier.pattern_generator import PatternGenerator
 
 
 class TestPatternGenerator:

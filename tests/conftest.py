@@ -1,4 +1,4 @@
-"""Pytest fixtures and test helpers for stitchify tests."""
+"""Pytest fixtures and test helpers for pixelstitchifier tests."""
 import io
 from pathlib import Path
 import pytest

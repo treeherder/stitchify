@@ -1,8 +1,8 @@
-# Stitchify Testing Guide
+# pixelstitchifier Testing Guide
 
 ## Overview
 
-This directory contains comprehensive tests for the stitchify cross-stitch pattern generator, following Test-Driven Development (TDD) principles.
+This directory contains comprehensive tests for the pixelstitchifier cross-stitch pattern generator, following Test-Driven Development (TDD) principles.
 
 ## Test Statistics
 
@@ -74,7 +74,7 @@ pytest tests/integration/
 ### Run with Coverage
 
 ```bash
-pytest --cov=src/stitchify --cov-report=html
+pytest --cov=src/pixelstitchifier --cov-report=html
 ```
 
 View coverage report: `open htmlcov/index.html`
@@ -90,7 +90,7 @@ pytest tests/integration/test_integration.py
 ### Run Specific Tests
 
 ```bash
-pytest tests/integration/test_integration.py::TestStitchifyIntegration::test_simple_workflow_without_dmc
+pytest tests/integration/test_integration.py::TestPixelstitchifierIntegration::test_simple_workflow_without_dmc
 ```
 
 ## Test Organization
@@ -221,7 +221,7 @@ Tests are designed to run in CI environments:
 
 ```bash
 # Make sure you're in the project root
-cd /home/fiver/projects/stitchify
+cd /home/fiver/projects/pixelstitchifier
 pytest
 ```
 

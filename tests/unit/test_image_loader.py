@@ -2,7 +2,7 @@
 import pytest
 from pathlib import Path
 from PIL import Image
-from src.stitchify.image_loader import ImageLoader
+from src.pixelstitchifier.image_loader import ImageLoader
 
 # Module will be: src.stitchify.image_loader.ImageLoader
 

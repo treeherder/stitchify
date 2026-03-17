@@ -1,4 +1,4 @@
-"""Main StitchifyConverter class - orchestrates the conversion workflow."""
+"""Main PixelstitchifierConverter class - orchestrates the conversion workflow."""
 from pathlib import Path
 from typing import Optional, Union, Dict, List
 import sys
@@ -12,7 +12,7 @@ from .pattern_generator import PatternGenerator
 from .dmc_matcher import DMCMatcher
 
 
-class StitchifyConverter:
+class PixelstitchifierConverter:
     """Main converter class that orchestrates cross-stitch pattern generation."""
     
     def __init__(
@@ -25,7 +25,7 @@ class StitchifyConverter:
         art_preset: str = 'photo'
     ):
         """
-        Initialize StitchifyConverter.
+        Initialize PixelstitchifierConverter.
         
         Args:
             use_dmc: Whether to match colors to DMC threads
@@ -273,7 +273,7 @@ def main(image_path: Optional[str] = None):
         if len(sys.argv) >= 2:
             image_path = sys.argv[1]
         else:
-            print("Usage: python -m stitchify <image_path> [options]")
+            print("Usage: python -m pixelstitchifier <image_path> [options]")
             print("")
             print("Options:")
             print("  --no-dmc              Disable DMC color matching")
@@ -282,8 +282,8 @@ def main(image_path: Optional[str] = None):
             print("  --width WIDTH         Pixel art target width (default: auto)")
             print("")
             print("Examples:")
-            print("  python3 stitchify photo.jpg --pixelate")
-            print("  python3 stitchify landscape.jpg --pixelate --preset landscape")
+            print("  python3 pixelstitchifier photo.jpg --pixelate")
+            print("  python3 pixelstitchifier landscape.jpg --pixelate --preset landscape")
             sys.exit(1)
     
     # Parse flags
@@ -311,7 +311,7 @@ def main(image_path: Optional[str] = None):
             pass
     
     try:
-        converter = StitchifyConverter(
+        converter = PixelstitchifierConverter(
             use_dmc=use_dmc,
             pixelate=pixelate,
             pixelate_width=pixelate_width,

@@ -1,0 +1,134 @@
+name: Build Windows Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install pyinstaller
+      
+      - name: Build GUI executable
+        run: |
+          pyinstaller --onefile --windowed --name=pixelstitchifier-gui --add-data="src/pixelstitchifier/dmc_colors.csv;src/stitchify" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn pixelstitchifier_gui.py
+      
+      - name: Build CLI executable
+        run: |
+          pyinstaller --onefile --name=pixelstitchifier --add-data="src/pixelstitchifier/dmc_colors.csv;src/stitchify" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
+      
+      - name: Test executables
+        run: |
+          dist\stitchify.exe --help
+      
+      - name: Create release archives
+        run: |
+          mkdir release
+          copy dist\pixelstitchifier-gui.exe release\
+          copy dist\stitchify.exe release\
+          echo "Release built successfully!" > release\README.txt
+          echo "GUI: Double-click pixelstitchifier-gui.exe" >> release\README.txt
+          echo "CLI: Run stitchify.exe from Command Prompt" >> release\README.txt
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixelstitchifier-windows
+          path: release/
+      
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/pixelstitchifier-gui.exe
+            dist/stitchify.exe
+          body: |
+            # pixelstitchifier Windows Release
+            
+            **For Windows users - no Python installation required!**
+            
+            ## Downloads
+            
+            - **pixelstitchifier-gui.exe** - Graphical interface (recommended for most users)
+              - Just double-click and use the point-and-click interface
+            
+            - **stitchify.exe** - Command-line interface (for advanced users)
+              - Run from Command Prompt: `stitchify.exe image.jpg --dmc --pixelate`
+            
+            ## Usage
+            
+            ### GUI Version (Easy!)
+            1. Download `pixelstitchifier-gui.exe`
+            2. Double-click to launch
+            3. Click "Select Image" and choose your photo
+            4. Check options (DMC matching is recommended)
+            5. Click "Generate Pattern"
+            6. Done! Pattern saved in same folder as your image
+            
+            ### CLI Version (Power Users)
+            ```cmd
+            stitchify.exe photo.jpg --dmc --pixelate --preset photo
+            ```
+            
+            ## First Run Warning
+            Windows Defender SmartScreen may show a warning because the .exe isn't code-signed:
+            1. Click "More info"
+            2. Click "Run anyway"
+            
+            This is normal for unsigned executables and safe to proceed.
+            
+            ## Features
+            - 🎨 Convert photos to pixel art
+            - 🧵 Automatic DMC thread color matching
+            - 📐 Professional cross-stitch patterns
+            - 💾 Save intermediate pixelated images
+            - 🎯 Quality presets for different image types
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install pyinstaller
+      
+      - name: Build Linux executable
+        run: |
+          pyinstaller --onefile --name=pixelstitchifier-linux --add-data="src/pixelstitchifier/dmc_colors.csv:src/stitchify" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
+      
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixelstitchifier-linux
+          path: dist/pixelstitchifier-linux
