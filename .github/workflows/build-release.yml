@@ -27,24 +27,24 @@ jobs:
       
       - name: Build GUI executable
         run: |
-          pyinstaller --onefile --windowed --name=pixelstitchifier-gui --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn pixelstitchifier_gui.py
+          pyinstaller --onefile --windowed --name=pixelstitchifier-gui --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" pixelstitchifier_gui.py
       
-      - name: Build CLI executable
+      - name: Test GUI executable
         run: |
-          pyinstaller --onefile --name=pixelstitchifier --add-data="src/pixelstitchifier/dmc_colors.csv;src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn pixelstitchifier_main.py
-      
-      - name: Test executables
-        run: |
-          dist\stitchify.exe --help
+          if (Test-Path dist\pixelstitchifier-gui.exe) {
+            Write-Host " GUI executable built successfully"
+            Get-Item dist\pixelstitchifier-gui.exe
+          } else {
+            Write-Error "GUI executable not found!"
+            exit 1
+          }
       
       - name: Create release archives
         run: |
           mkdir release
           copy dist\pixelstitchifier-gui.exe release\
-          copy dist\stitchify.exe release\
           echo "Release built successfully!" > release\README.txt
-          echo "GUI: Double-click pixelstitchifier-gui.exe" >> release\README.txt
-          echo "CLI: Run stitchify.exe from Command Prompt" >> release\README.txt
+          echo "Double-click pixelstitchifier-gui.exe to launch" >> release\README.txt
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -58,48 +58,41 @@ jobs:
         with:
           files: |
             dist/pixelstitchifier-gui.exe
-            dist/stitchify.exe
           body: |
             # pixelstitchifier Windows Release
             
             **For Windows users - no Python installation required!**
             
-            ## Downloads
+            ## Download
             
-            - **pixelstitchifier-gui.exe** - Graphical interface (recommended for most users)
-              - Just double-click and use the point-and-click interface
+            **pixelstitchifier-gui.exe** - Graphical interface for creating cross-stitch patterns
             
-            - **stitchify.exe** - Command-line interface (for advanced users)
-              - Run from Command Prompt: `stitchify.exe image.jpg --dmc --pixelate`
+            ## How to Use
             
-            ## Usage
-            
-            ### GUI Version (Easy!)
             1. Download `pixelstitchifier-gui.exe`
-            2. Double-click to launch
+            2. Double-click to launch the application
             3. Click "Select Image" and choose your photo
-            4. Check options (DMC matching is recommended)
-            5. Click "Generate Pattern"
-            6. Done! Pattern saved in same folder as your image
-            
-            ### CLI Version (Power Users)
-            ```cmd
-            stitchify.exe photo.jpg --dmc --pixelate --preset photo
-            ```
+            4. Check "Use DMC color matching" (recommended)
+            5. Optionally check "Convert to pixel art" for photos
+            6. Click "Generate Pattern"
+            7. Your pattern will be saved in the same folder as your image!
             
             ## First Run Warning
+            
             Windows Defender SmartScreen may show a warning because the .exe isn't code-signed:
             1. Click "More info"
             2. Click "Run anyway"
             
-            This is normal for unsigned executables and safe to proceed.
+            This is normal for unsigned executables and completely safe.
             
             ## Features
-            - 🎨 Convert photos to pixel art
-            - 🧵 Automatic DMC thread color matching
-            - 📐 Professional cross-stitch patterns
+            
+            - 🎨 Convert photos to pixel art cross-stitch patterns
+            - 🧵 Automatic DMC thread color matching (454 colors)
+            - 📐 Professional pattern generation
             - 💾 Save intermediate pixelated images
             - 🎯 Quality presets for different image types
+            
+            Made with ❤️ for Andrea
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
