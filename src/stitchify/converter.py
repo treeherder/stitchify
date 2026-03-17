@@ -17,7 +17,10 @@ class StitchifyConverter:
         self,
         use_dmc: bool = False,
         dmc_colors: Optional[Dict] = None,
-        symbols: Optional[str] = None
+        symbols: Optional[str] = None,
+        pixelate: bool = False,
+        pixelate_width: Optional[int] = None,
+        art_preset: str = 'photo'
     ):
         """
         Initialize StitchifyConverter.
@@ -26,8 +29,14 @@ class StitchifyConverter:
             use_dmc: Whether to match colors to DMC threads
             dmc_colors: Optional custom DMC color database
             symbols: Optional custom symbol characters
+            pixelate: Convert photo to pixel art before processing
+            pixelate_width: Target width for pixel art (default: auto-calculated)
+            art_preset: Quality preset for art conversion ('photo', 'landscape', 'portrait', 'detailed')
         """
         self.use_dmc = use_dmc
+        self.pixelate = pixelate
+        self.pixelate_width = pixelate_width
+        self.art_preset = art_preset
         self.color_processor = ColorProcessor()
         self.symbol_mapper = SymbolMapper(symbols=symbols)
         self.dmc_matcher = DMCMatcher(dmc_colors=dmc_colors) if use_dmc else None
@@ -59,6 +68,10 @@ class StitchifyConverter:
         # Step 1: Load image
         print(f"Loading image: {input_path}")
         
+        # If pixelating, notify user
+        if self.pixelate:
+            print(f"Converting to pixel art (preset: {self.art_preset})...")
+        
         # If using DMC, get palette for quantization
         dmc_palette = None
         max_colors = len(self.symbol_mapper.available_symbols)  # Limit to symbol pool
@@ -67,7 +80,14 @@ class StitchifyConverter:
             dmc_palette = self.dmc_matcher.get_palette()
             print(f"Quantizing to max {max_colors} colors from {len(dmc_palette)} DMC palette...")
         
-        loader = ImageLoader(input_path, dmc_palette=dmc_palette, max_colors=max_colors)
+        loader = ImageLoader(
+            input_path,
+            dmc_palette=dmc_palette,
+            max_colors=max_colors,
+            pixelate=self.pixelate,
+            pixelate_width=self.pixelate_width,
+            art_preset=self.art_preset
+        )
         width, height = loader.get_dimensions()
         
         # Step 2: Process colors
@@ -216,15 +236,50 @@ def main(image_path: Optional[str] = None):
         if len(sys.argv) >= 2:
             image_path = sys.argv[1]
         else:
-            print("Usage: python -m stitchify <image_path>")
-            print("       or: python -m stitchify <image_path> --no-dmc  (disable DMC matching)")
+            print("Usage: python -m stitchify <image_path> [options]")
+            print("")
+            print("Options:")
+            print("  --no-dmc              Disable DMC color matching")
+            print("  --pixelate            Convert photo to pixel art")
+            print("  --preset PRESET       Art quality preset: photo, landscape, portrait, detailed")
+            print("  --width WIDTH         Pixel art target width (default: auto)")
+            print("")
+            print("Examples:")
+            print("  python3 stitchify photo.jpg --pixelate")
+            print("  python3 stitchify landscape.jpg --pixelate --preset landscape")
             sys.exit(1)
     
-    # DMC is now the default! Use --no-dmc to disable
+    # Parse flags
     use_dmc = "--no-dmc" not in sys.argv
+    pixelate = "--pixelate" in sys.argv
+    
+    # Parse preset
+    art_preset = 'photo'
+    if "--preset" in sys.argv:
+        try:
+            preset_idx = sys.argv.index("--preset")
+            if preset_idx + 1 < len(sys.argv):
+                art_preset = sys.argv[preset_idx + 1]
+        except (ValueError, IndexError):
+            pass
+    
+    # Parse width
+    pixelate_width = None
+    if "--width" in sys.argv:
+        try:
+            width_idx = sys.argv.index("--width")
+            if width_idx + 1 < len(sys.argv):
+                pixelate_width = int(sys.argv[width_idx + 1])
+        except (ValueError, IndexError):
+            pass
     
     try:
-        converter = StitchifyConverter(use_dmc=use_dmc)
+        converter = StitchifyConverter(
+            use_dmc=use_dmc,
+            pixelate=pixelate,
+            pixelate_width=pixelate_width,
+            art_preset=art_preset
+        )
         output_path = converter.convert(image_path)
         print(f"\n{'='*60}")
         print(f"✓ Pattern generation complete!")

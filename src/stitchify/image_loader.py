@@ -7,15 +7,26 @@ from PIL import Image
 class ImageLoader:
     """Loads and provides access to image pixel data."""
     
-    def __init__(self, image_path: Union[str, Path], dmc_palette: Optional[Dict[str, Any]] = None, max_colors: int = 52):
+    def __init__(
+        self,
+        image_path: Union[str, Path],
+        dmc_palette: Optional[Dict[str, Any]] = None,
+        max_colors: int = 52,
+        pixelate: bool = False,
+        pixelate_width: Optional[int] = None,
+        art_preset: str = 'photo'
+    ):
         """
         Initialize ImageLoader with an image file.
-        Optionally quantize to DMC palette for accurate color constraint.
+        Optionally convert to pixel art and quantize to DMC palette.
         
         Args:
             image_path: Path to the image file
             dmc_palette: Optional DMC color palette for quantization
             max_colors: Maximum number of colors to use (default 52 for symbol limit)
+            pixelate: Whether to convert photo to pixel art first
+            pixelate_width: Target width for pixelation (default: max_colors * 2.5)
+            art_preset: Quality preset for art conversion ('photo', 'landscape', 'portrait', 'detailed')
             
         Raises:
             FileNotFoundError: If image file doesn't exist
@@ -26,12 +37,21 @@ class ImageLoader:
             raise FileNotFoundError(f"Image file not found: {image_path}")
         
         try:
-            self.image = Image.open(self.path)
+            # Stage 1: Optional pixel art conversion (before DMC quantization)
+            if pixelate:
+                from .art_converter import ArtConverter
+                
+                target_width = pixelate_width or int(max_colors * 2.5)
+                converter = ArtConverter(target_width=target_width, preset=art_preset)
+                self.image = converter.convert(self.path, preserve_details=True)
+            else:
+                self.image = Image.open(self.path)
+            
             # Convert to RGBA to ensure consistent format
             if self.image.mode != "RGBA":
                 self.image = self.image.convert("RGBA")
             
-            # Quantize to DMC palette if provided
+            # Stage 2: Quantize to DMC palette if provided
             if dmc_palette:
                 self.image = self._quantize_to_dmc_palette(self.image, dmc_palette, max_colors)
         except Exception as e:

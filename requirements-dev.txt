@@ -2,3 +2,8 @@ pytest>=7.0.0
 pytest-cov>=4.0.0
 pytest-mock>=3.0.0
 Pillow>=9.0.0
+
+# Optional: Advanced art conversion features
+# Install with: pip install opencv-python scikit-learn
+opencv-python>=4.5.0
+scikit-learn>=1.0.0

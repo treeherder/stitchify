@@ -1,31 +1,42 @@
 # Stitchify
 
-Convert pixel art images into professional cross-stitch patterns with optional DMC thread color matching.
+Convert images into professional cross-stitch patterns with automatic DMC thread matching and intelligent pixel art conversion.
 
-**Version 0.4.0** - Now with modular architecture and comprehensive testing!
+**Version 0.5.0** - Now with high-quality photo-to-pixel-art conversion!
 
 ## Features
 
 - ✅ Converts pixel-art images to cross-stitch patterns (1px = 1 stitch)
+- ✅ 🎨 **NEW:** Photo-to-pixel-art conversion with professional quality
+- ✅ 🧵 **NEW:** Automatic DMC thread color matching (454 colors)
+- ✅ 🎭 Multi-stage art conversion with edge-preserving filters
+- ✅ 🖼️ Quality presets for different image types (photo, landscape, portrait, detailed)
 - ✅ Generates pattern grid with major/minor gridlines
 - ✅ Symbol-based color mapping (A-Z, a-z)
 - ✅ Comprehensive legend with stitch counts
-- ✅ **NEW:** DMC thread color matching
-- ✅ **NEW:** Modular, testable architecture
-- ✅ **NEW:** Comprehensive test suite (TDD)
-- ✅ **NEW:** Thread-database integration support
+- ✅ Modular, testable architecture
+- ✅ Comprehensive test suite (TDD)
 - ✅ Deterministic output (same input = same output)
 
 ## Requirements
 
+**Core:**
 - Python 3.8+
 - Pillow (PIL)
+
+**Optional (for high-quality photo conversion):**
+- opencv-python - Edge-preserving bilateral filtering
+- scikit-learn - Intelligent K-means color clustering
 
 ## Installation
 
 ### Basic Installation
 
 ```bash
+# Core dependencies only
+pip install Pillow
+
+# With photo-to-pixel-art support (recommended)
 pip install -r requirements-dev.txt
 ```
 
@@ -52,6 +63,27 @@ python3 stitchify your_image.png
 # Disable DMC matching if you want original colors
 python3 stitchify your_image.png --no-dmc
 ```
+
+**Photo to Pixel Art Conversion** (NEW):
+
+```bash
+# Convert photos to high-quality pixel art for cross-stitch
+python3 stitchify photo.jpg --pixelate
+
+# Use quality presets for different image types
+python3 stitchify landscape.jpg --pixelate --preset landscape
+python3 stitchify portrait.jpg --pixelate --preset portrait
+python3 stitchify detailed_art.jpg --pixelate --preset detailed
+
+# Custom pixel art width
+python3 stitchify photo.jpg --pixelate --width 200
+```
+
+**Available Presets:**
+- `photo` - General photos with balanced settings (default)
+- `landscape` - Enhanced saturation and contrast for outdoor scenes
+- `portrait` - Gentler smoothing to preserve skin tones
+- `detailed` - Maximum edge preservation for intricate subjects
 
 **Alternative entry points:**
 
@@ -179,6 +211,98 @@ The generated pattern legend will include:
 - Thread color name (e.g., "Black")
 - Hex color code
 - Stitch count
+
+## Photo to Pixel Art Conversion
+
+Transform photos into high-quality cross-stitch patterns with professional pixel art conversion!
+
+### Multi-Stage Pipeline
+
+When using `--pixelate`, your photo goes through a sophisticated 5-stage process:
+
+1. **Bilateral Filtering** - Edge-preserving smoothing that flattens colors while keeping sharp boundaries
+2. **High-Quality Resize** - Lanczos interpolation for superior downsampling
+3. **K-means Clustering** - Intelligent color grouping for cleaner regions
+4. **Edge Enhancement** - Selective sharpening of important features
+5. **Color Adjustment** - Saturation and contrast boost for vibrant stitching
+
+### How It Works
+
+```python
+# Before: Photo with thousands of colors
+# After:  Clean pixel art with 20-30 DMC thread colors
+
+photo.jpg (1920x1080, 45,000 colors)
+    ↓ --pixelate
+pixel_art (128x72, 25 colors)
+    ↓ automatic DMC quantization
+pattern (25 DMC threads, ready to stitch!)
+```
+
+### Quality Presets
+
+Different image types need different processing:
+
+- **photo**: Balanced settings for general photography
+  - Moderate bilateral filtering (d=9)
+  - Edge enhancement: 30%
+  - 64 intermediate colors via K-means
+  
+- **landscape**: Enhanced for outdoor scenes
+  - Stronger saturation boost (1.2x)
+  - Higher contrast (1.15x)
+  - 48 intermediate colors
+  
+- **portrait**: Gentle processing for faces
+  - Stronger bilateral smoothing (d=11)
+  - Reduced edge enhancement (20%)
+  - Preserves skin tones
+  
+- **detailed**: Maximum detail preservation
+  - Minimal bilateral (d=5)
+  - Strong edge enhancement (70%)
+  - 72 intermediate colors
+
+### Programmatic Usage
+
+```python
+from stitchify import ArtConverter, StitchifyConverter
+
+# Method 1: Convert photo to pixel art, then to pattern
+converter = ArtConverter(target_width=128, preset='landscape')
+pixel_art = converter.convert('photo.jpg')
+pixel_art.save('pixel_art.png')
+
+# Method 2: One-step conversion
+converter = StitchifyConverter(
+    use_dmc=True,
+    pixelate=True,
+    pixelate_width=128,
+    art_preset='portrait'
+)
+converter.convert('photo.jpg', 'pattern.png')
+
+# Method 3: Convenience function
+from stitchify import convert_to_pixel_art
+pixel_art = convert_to_pixel_art('photo.jpg', width=128, preset='photo')
+```
+
+### Technical Details
+
+**Bilateral Filter**: σ_color = 75, σ_space = 75
+- Gaussian kernel that weights pixels by spatial proximity AND color similarity
+- Smooths flat areas while preserving edges
+- Essential for clean pixel art aesthetic
+
+**K-means Clustering**: n_clusters = 48-72 (preset dependent)
+- Groups perceptually similar colors before DMC quantization
+- Creates cleaner color regions for better stitching
+- Reduces visual noise from compression artifacts
+
+**Floyd-Steinberg Dithering**: Error diffusion to adjacent pixels
+- Creates illusion of intermediate colors
+- Maintains perceived accuracy when quantizing to DMC palette
+- Standard in professional pixel art tools
 
 ### Thread Database Integration
 
