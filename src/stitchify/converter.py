@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Optional, Union, Dict, List
 import sys
+
 from PIL import Image
 
 from .image_loader import ImageLoader
@@ -95,16 +96,16 @@ class StitchifyConverter:
         if self.pixelate:
             pixelated_path = self._generate_pixelated_path(input_path)
             
-            # Convert RGBA to RGB for JPEG format (JPEG doesn't support transparency)
-            save_image = loader.image
+            # Convert RGBA to RGB for JPEG compatibility
+            img_to_save = loader.image
             if pixelated_path.suffix.lower() in ['.jpg', '.jpeg']:
-                if save_image.mode == 'RGBA':
-                    # Create RGB image with white background
-                    rgb_image = Image.new('RGB', save_image.size, (255, 255, 255))
-                    rgb_image.paste(save_image, mask=save_image.split()[3])  # Use alpha channel as mask
-                    save_image = rgb_image
+                if img_to_save.mode == 'RGBA':
+                    # Convert RGBA to RGB on white background
+                    rgb_img = Image.new('RGB', img_to_save.size, (255, 255, 255))
+                    rgb_img.paste(img_to_save, mask=img_to_save.split()[3])  # Use alpha channel as mask
+                    img_to_save = rgb_img
             
-            save_image.save(pixelated_path)
+            img_to_save.save(pixelated_path)
             print(f"Saved pixelated image to: {pixelated_path}")
         
         # Step 2: Process colors
