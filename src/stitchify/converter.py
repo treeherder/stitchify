@@ -90,6 +90,12 @@ class StitchifyConverter:
         )
         width, height = loader.get_dimensions()
         
+        # Save pixelated image if pixelation was used
+        if self.pixelate:
+            pixelated_path = self._generate_pixelated_path(input_path)
+            loader.image.save(pixelated_path)
+            print(f"Saved pixelated image to: {pixelated_path}")
+        
         # Step 2: Process colors
         print("Processing colors...")
         color_counts = self.color_processor.count_colors(loader)
@@ -192,6 +198,25 @@ class StitchifyConverter:
         
         # Generate: "filename_pattern.ext"
         output_name = f"{base_name}_pattern.{extension}"
+        return input_path.parent / output_name
+    
+    def _generate_pixelated_path(self, input_path: Path) -> Path:
+        """
+        Generate pixelated image filename from input filename.
+        
+        Args:
+            input_path: Input image path
+            
+        Returns:
+            Pixelated image output path
+        """
+        # Split filename and extension
+        name_parts = input_path.name.split(".")
+        extension = name_parts[-1]
+        base_name = ".".join(name_parts[:-1])
+        
+        # Generate: "filename_pixelated.ext"
+        output_name = f"{base_name}_pixelated.{extension}"
         return input_path.parent / output_name
     
     def _build_symbol_grid(self, loader: ImageLoader) -> List[List[str]]:
