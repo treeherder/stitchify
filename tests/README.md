@@ -4,19 +4,45 @@
 
 This directory contains comprehensive tests for the stitchify cross-stitch pattern generator, following Test-Driven Development (TDD) principles.
 
+## Test Statistics
+
+- **Total Tests**: 97 (95 passing, 2 skipped)
+- **Overall Coverage**: 61%
+- **Unit Tests**: 83 tests across 7 modules
+- **Integration Tests**: 14 end-to-end workflow tests
+
+### Module Coverage
+
+| Module | Coverage | Tests | Status |
+|--------|----------|-------|--------|
+| color_processor.py | 100% | 11 | ✅ Complete |
+| symbol_mapper.py | 98% | 12 | ✅ Complete |
+| dmc_matcher.py | 93% | 14 | ✅ Complete |
+| pattern_generator.py | 92% | 12 | ✅ Complete |
+| art_converter.py | 91% | 12 | ✅ Complete |
+| image_loader.py | 53% | 11 | ⚠️ Partial |
+| converter.py | 9% | - | ℹ️ Via integration |
+| thread_db_integration.py | 0% | 9 | ℹ️ External |
+
 ## Test Structure
 
 ```
 tests/
-├── __init__.py                 # Test package initialization
-├── conftest.py                 # Pytest fixtures and test helpers
-├── test_image_loader.py        # Image loading and validation tests
-├── test_color_processor.py     # Color conversion and processing tests
-├── test_symbol_mapper.py       # Symbol assignment and legend tests
-├── test_pattern_generator.py   # Pattern image generation tests
-├── test_dmc_matcher.py         # DMC color matching tests
-├── test_thread_database.py     # Thread-database integration tests
-└── test_integration.py         # End-to-end integration tests
+├── __init__.py                      # Test package initialization
+├── conftest.py                      # Pytest fixtures and test helpers
+├── README.md                        # This file
+├── unit/                            # Unit tests (focused, isolated)
+│   ├── __init__.py
+│   ├── test_art_converter.py       # Photo-to-pixel-art conversion tests
+│   ├── test_color_processor.py     # Color conversion and processing tests
+│   ├── test_dmc_matcher.py         # DMC color matching tests
+│   ├── test_image_loader.py        # Image loading and validation tests
+│   ├── test_pattern_generator.py   # Pattern image generation tests
+│   ├── test_symbol_mapper.py       # Symbol assignment and legend tests
+│   └── test_thread_database.py     # Thread-database integration tests
+└── integration/                     # Integration tests (end-to-end)
+    ├── __init__.py
+    └── test_integration.py          # Full workflow integration tests
 ```
 
 ## Running Tests
@@ -33,6 +59,18 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
+### Run Only Unit Tests
+
+```bash
+pytest tests/unit/
+```
+
+### Run Only Integration Tests
+
+```bash
+pytest tests/integration/
+```
+
 ### Run with Coverage
 
 ```bash
@@ -44,25 +82,28 @@ View coverage report: `open htmlcov/index.html`
 ### Run Specific Test Files
 
 ```bash
-pytest tests/test_image_loader.py
-pytest tests/test_dmc_matcher.py -v
+pytest tests/unit/test_image_loader.py
+pytest tests/unit/test_dmc_matcher.py -v
+pytest tests/integration/test_integration.py
 ```
 
 ### Run Specific Tests
 
 ```bash
-pytest tests/test_integration.py::TestStitchifyIntegration::test_simple_workflow_without_dmc
+pytest tests/integration/test_integration.py::TestStitchifyIntegration::test_simple_workflow_without_dmc
 ```
 
 ## Test Organization
 
-### Unit Tests
+### Unit Tests (`tests/unit/`)
 
-- **test_image_loader.py**: Tests for ImageLoader class
-  - Loading various image formats
-  - Pixel data access
-  - Dimension handling
-  - Error cases
+Focused, isolated tests for individual modules and classes.
+
+- **test_art_converter.py**: Tests for ArtConverter class (photo-to-pixel-art)
+  - Bilateral filtering
+  - K-means color simplification
+  - Quality presets
+  - Smart resizing with aspect ratio
 
 - **test_color_processor.py**: Tests for ColorProcessor class
   - RGBA to hex conversion
@@ -70,11 +111,17 @@ pytest tests/test_integration.py::TestStitchifyIntegration::test_simple_workflow
   - Transparency filtering
   - Color counting
 
-- **test_symbol_mapper.py**: Tests for SymbolMapper class
-  - Symbol assignment
-  - Legend generation
-  - DMC integration in legends
-  - Symbol exhaustion handling
+- **test_dmc_matcher.py**: Tests for DMCMatcher class
+  - Color distance calculations
+  - Nearest color matching
+  - DMC database loading
+  - Batch color matching
+
+- **test_image_loader.py**: Tests for ImageLoader class
+  - Loading various image formats
+  - Pixel data access
+  - Dimension handling
+  - Error cases
 
 - **test_pattern_generator.py**: Tests for PatternGenerator class
   - Grid line drawing
@@ -82,24 +129,27 @@ pytest tests/test_integration.py::TestStitchifyIntegration::test_simple_workflow
   - Legend formatting
   - Dimension calculations
 
-- **test_dmc_matcher.py**: Tests for DMCMatcher class
-  - Color distance calculations
-  - Nearest color matching
-  - DMC database loading
-  - Batch color matching
+- **test_symbol_mapper.py**: Tests for SymbolMapper class
+  - Symbol assignment
+  - Legend generation
+  - DMC integration in legends
+  - Symbol exhaustion handling
 
-### Integration Tests
-
-- **test_integration.py**: End-to-end workflow tests
-  - Complete conversion pipeline
-  - CLI interface
-  - Error handling
-  - Backwards compatibility
-
-- **test_thread_database.py**: Thread-database integration
+- **test_thread_database.py**: Tests for thread-database integration
   - Package availability detection
   - Format conversion
   - Fallback behavior
+
+### Integration Tests (`tests/integration/`)
+
+End-to-end workflow tests that exercise the complete system.
+
+- **test_integration.py**: Full pipeline integration tests
+  - Complete conversion workflow
+  - CLI interface
+  - Error handling
+  - Performance benchmarks
+  - Backwards compatibility
 
 ## Test Fixtures
 
