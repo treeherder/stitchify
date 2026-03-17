@@ -103,32 +103,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-linux:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-tk
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-          pip install pyinstaller
-      
-      - name: Build Linux executable
-        run: |
-          pyinstaller --onefile --name=pixelstitchifier-linux --add-data="src/pixelstitchifier/dmc_colors.csv:src/pixelstitchifier" --hidden-import=PIL._tkinter_finder --hidden-import=cv2 --hidden-import=sklearn --hidden-import=numpy --collect-all=PIL --collect-all=cv2 --collect-all=sklearn src/pixelstitchifier/__main__.py
-      
-      - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: pixelstitchifier-linux
-          path: dist/pixelstitchifier-linux
